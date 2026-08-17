@@ -470,8 +470,7 @@ p {
 	justify-content: space-between;
 }
 
-.booking-actions__group,
-.dialog-actions {
+.booking-actions__group {
 	display: flex;
 	gap: 14px;
 	flex-wrap: wrap;
@@ -522,8 +521,7 @@ p {
 	margin-top: 24px;
 }
 
-.cookie-gate,
-.dialog-backdrop {
+.cookie-gate {
 	position: fixed;
 	inset: 0;
 	z-index: 100;
@@ -535,7 +533,6 @@ p {
 }
 
 .cookie-gate__card,
-.site-dialog,
 .settings-panel {
 	width: min(100%, 620px);
 	padding: clamp(28px, 5vw, 48px);
@@ -551,10 +548,6 @@ p {
 .settings-panel h1 {
 	max-width: none;
 	font-size: clamp(2.2rem, 5vw, 3.8rem);
-}
-
-.dialog-actions {
-	margin-top: 8px;
 }
 
 .utility-header {
@@ -809,7 +802,6 @@ p {
 	.booking-actions,
 	.booking-actions--split,
 	.booking-actions__group,
-	.dialog-actions,
 	.utility-header {
 		flex-direction: column;
 		align-items: stretch;
