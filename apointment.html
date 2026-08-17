@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+		<title>Book Appointment</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+    <!-- i love leaving notes -->
+	<body>
+		<div class="page-shell">
+			<header class="page-hero page-hero--compact">
+				<div class="page-hero__overlay"></div>
+				<div class="page-hero__inner">
+					<div class="topbar topbar--page">
+						<a class="brand" href="index.html" data-return-home>Studio North</a>
+						<nav class="topnav" aria-label="Primary">
+							<a href="index.html" data-return-home>Home</a>
+							<a href="index.html#services">Services</a>
+							<a href="apointment.html" aria-current="page">Book Appointment</a>
+							<a href="index.html#signin">Sign In</a>
+							<a href="index.html#contact">Contact</a>
+						</nav>
+					</div>
+
+					<div class="page-hero__content">
+						<p class="eyebrow">Book Appointment</p>
+						<h1>Choose a time with confidence</h1>
+						<p class="hero__text">
+							Book as a guest with your name and email, or return later to track appointments through an optional account.
+							Every confirmation is sent by email right away.
+						</p>
+					</div>
+				</div>
+			</header>
+
+			<main class="booking-page" id="booking-flow">
+				<section class="section booking-intro" aria-labelledby="booking-intro-title">
+					<div class="section__heading narrow">
+						<p class="section__eyebrow">Guest First</p>
+						<h2 id="booking-intro-title">A simple step-by-step booking flow</h2>
+						<p>
+							You do not need an account to complete your booking. Choose your service, pick a time, enter your details, and review everything before you confirm.
+						</p>
+					</div>
+					<ol class="progress-list" aria-label="Booking progress">
+						<li class="progress-list__item is-active" data-progress-item="1">Service</li>
+						<li class="progress-list__item" data-progress-item="2">Staff</li>
+						<li class="progress-list__item" data-progress-item="3">Date</li>
+						<li class="progress-list__item" data-progress-item="4">Time</li>
+						<li class="progress-list__item" data-progress-item="5">Name</li>
+						<li class="progress-list__item" data-progress-item="6">Email</li>
+						<li class="progress-list__item" data-progress-item="7">Phone</li>
+						<li class="progress-list__item" data-progress-item="8">Review</li>
+					</ol>
+				</section>
+
+				<section class="section booking-layout">
+					<div class="booking-main">
+						<article class="booking-step" data-step="1">
+							<div class="booking-step__header">
+								<p class="section__eyebrow">Step 1</p>
+								<h2>Choose a service</h2>
+								<p>Select the appointment that best matches the visit you have in mind.</p>
+							</div>
+							<div class="choice-grid">
+								<button class="choice-card" type="button" data-booking-field="service" data-value="Signature Consultation">
+									<span class="card__meta">45 minutes</span>
+									<strong>Signature Consultation</strong>
+									<span>A calm first visit with time to discuss your needs and plan the next step.</span>
+								</button>
+								<button class="choice-card" type="button" data-booking-field="service" data-value="Focused Treatment Session">
+									<span class="card__meta">60 minutes</span>
+									<strong>Focused Treatment Session</strong>
+									<span>A dedicated appointment for returning clients who want a clear, uninterrupted session.</span>
+								</button>
+								<button class="choice-card" type="button" data-booking-field="service" data-value="Follow-Up Review">
+									<span class="card__meta">30 minutes</span>
+									<strong>Follow-Up Review</strong>
+									<span>A shorter appointment to review progress, adjust plans, and confirm next steps.</span>
+								</button>
+							</div>
+						</article>
+
+						<article class="booking-step" data-step="2" hidden>
+							<div class="booking-step__header">
+								<p class="section__eyebrow">Step 2</p>
+								<h2>Choose a staff member</h2>
+								<p>Select a preferred practitioner, or let the studio assign the next best fit.</p>
+							</div>
+							<div class="choice-grid choice-grid--two">
+								<button class="choice-card" type="button" data-booking-field="staff" data-value="Any Available Professional">
+									<strong>Any Available Professional</strong>
+									<span>Best for the fastest booking options and flexible scheduling.</span>
+								</button>
+								<button class="choice-card" type="button" data-booking-field="staff" data-value="Jordan Avery">
+									<strong>Jordan Avery</strong>
+									<span>Warm, steady guidance with a focus on first-time visits and follow-ups.</span>
+								</button>
+							</div>
+							<div class="booking-actions">
+								<button class="button button--secondary" type="button" data-prev-step>Back</button>
+							</div>
+						</article>
+
+						<article class="booking-step" data-step="3" hidden>
+							<div class="booking-step__header">
+								<p class="section__eyebrow">Step 3</p>
+								<h2>Choose a date</h2>
+								<p>Pick the day that works best for your schedule.</p>
+							</div>
+							<label class="field">
+								<span>Date</span>
+								<input class="input" type="date" name="appointment-date" data-booking-input="date">
+							</label>
+							<div class="booking-actions">
+								<button class="button button--secondary" type="button" data-prev-step>Back</button>
+							</div>
+						</article>
+
+						<article class="booking-step" data-step="4" hidden>
+							<div class="booking-step__header">
+								<p class="section__eyebrow">Step 4</p>
+								<h2>Choose a time</h2>
+								<p>Select an available appointment time for your visit.</p>
+							</div>
+							<div class="time-grid">
+								<button class="choice-card choice-card--compact" type="button" data-booking-field="time" data-value="9:00 AM">9:00 AM</button>
+								<button class="choice-card choice-card--compact" type="button" data-booking-field="time" data-value="10:30 AM">10:30 AM</button>
+								<button class="choice-card choice-card--compact" type="button" data-booking-field="time" data-value="1:00 PM">1:00 PM</button>
+								<button class="choice-card choice-card--compact" type="button" data-booking-field="time" data-value="3:30 PM">3:30 PM</button>
+							</div>
+							<div class="booking-actions">
+								<button class="button button--secondary" type="button" data-prev-step>Back</button>
+							</div>
+						</article>
+
+						<article class="booking-step" data-step="5" hidden>
+							<div class="booking-step__header">
+								<p class="section__eyebrow">Step 5</p>
+								<h2>What is your name?</h2>
+								<p>Guest booking requires your full name.</p>
+							</div>
+							<label class="field booking-question">
+								<span>Full name</span>
+								<input class="input" type="text" name="full-name" placeholder="Your name" required autocomplete="name" data-booking-input="name" data-advance-input>
+							</label>
+							<div class="booking-actions booking-actions--split">
+								<button class="button button--secondary" type="button" data-prev-step>Back</button>
+								<button class="button button--primary" type="button" data-next-step>Continue</button>
+							</div>
+						</article>
+
+						<article class="booking-step" data-step="6" hidden>
+							<div class="booking-step__header">
+								<p class="section__eyebrow">Step 6</p>
+								<h2>Where should we send confirmation?</h2>
+								<p>Your confirmation and appointment details will be sent by email.</p>
+							</div>
+							<label class="field booking-question">
+								<span>Email address</span>
+								<input class="input" type="email" name="email" placeholder="you@example.com" required autocomplete="email" data-booking-input="email" data-advance-input>
+							</label>
+							<div class="booking-actions booking-actions--split">
+								<button class="button button--secondary" type="button" data-prev-step>Back</button>
+								<button class="button button--primary" type="button" data-next-step>Continue</button>
+							</div>
+						</article>
+
+						<article class="booking-step" data-step="7" hidden>
+							<div class="booking-step__header">
+								<p class="section__eyebrow">Step 7</p>
+								<h2>Would you like to add a phone number?</h2>
+								<p>This is optional. You may continue without one.</p>
+							</div>
+							<label class="field booking-question">
+								<span>Phone number</span>
+								<input class="input" type="tel" name="phone" placeholder="Optional" autocomplete="tel" data-booking-input="phone">
+							</label>
+							<div class="booking-actions booking-actions--split">
+								<button class="button button--secondary" type="button" data-prev-step>Back</button>
+								<div class="booking-actions__group">
+									<button class="button button--secondary" type="button" data-skip-step>Skip</button>
+									<button class="button button--primary" type="button" data-next-step>Continue</button>
+								</div>
+							</div>
+						</article>
+
+						<article class="booking-step" data-step="8" hidden>
+							<div class="booking-step__header">
+								<p class="section__eyebrow">Step 8</p>
+								<h2>Review your appointment</h2>
+								<p>Check your selections before you confirm the booking.</p>
+							</div>
+							<div class="review-grid">
+								<div class="review-row"><span>Service</span><strong data-summary="service">Not selected</strong></div>
+								<div class="review-row"><span>Staff</span><strong data-summary="staff">Not selected</strong></div>
+								<div class="review-row"><span>Date</span><strong data-summary="date">Not selected</strong></div>
+								<div class="review-row"><span>Time</span><strong data-summary="time">Not selected</strong></div>
+								<div class="review-row"><span>Name</span><strong data-summary="name">Not entered</strong></div>
+								<div class="review-row"><span>Email</span><strong data-summary="email">Not entered</strong></div>
+								<div class="review-row"><span>Phone</span><strong data-summary="phone">Optional</strong></div>
+							</div>
+							<div class="booking-actions booking-actions--split">
+								<button class="button button--secondary" type="button" data-prev-step>Back</button>
+								<button class="button button--primary" type="button" data-confirm-booking>Confirm Booking</button>
+							</div>
+						</article>
+
+						<article class="booking-confirmation" id="booking-confirmation" hidden>
+							<p class="section__eyebrow">Booking Confirmation</p>
+							<h2>Your appointment request is ready</h2>
+							<p>
+								We will send the confirmation and appointment details by email. You can return to the Home page or review services again.
+							</p>
+							<div class="booking-actions">
+								<a class="button button--primary" href="index.html">Return Home</a>
+								<a class="button button--secondary" href="index.html#services">See Our Techniques</a>
+							</div>
+						</article>
+					</div>
+				</section>
+			</main>
+
+			<footer class="footer footer--page">
+				<p>Need to change plans later? You can cancel or reschedule from your appointment area.</p>
+				<div class="footer__links">
+					<a href="settings.html">Cookie Settings</a>
+					<a href="index.html" data-return-home>Return Home</a>
+				</div>
+			</footer>
+
+			<div class="dialog-backdrop" id="leave-dialog" hidden>
+				<section class="site-dialog" role="dialog" aria-modal="true" aria-labelledby="leave-dialog-title">
+					<p class="section__eyebrow">Leave Booking?</p>
+					<h2 id="leave-dialog-title">Do you want to leave?</h2>
+					<p>Your changes may not be saved.</p>
+					<div class="dialog-actions">
+						<button class="button button--primary" type="button" data-save-and-leave>Save and Return Home</button>
+						<button class="button button--secondary" type="button" data-discard-and-leave>Discard and Return Home</button>
+						<button class="button button--secondary" type="button" data-stay-on-page>Stay Here</button>
+					</div>
+				</section>
+			</div>
+
+			<div class="dialog-backdrop" id="restore-dialog" hidden>
+				<section class="site-dialog" role="dialog" aria-modal="true" aria-labelledby="restore-dialog-title">
+					<p class="section__eyebrow">Saved Progress</p>
+					<h2 id="restore-dialog-title">Continue your booking?</h2>
+					<p>We found booking progress saved on this device.</p>
+					<div class="dialog-actions">
+						<button class="button button--primary" type="button" data-restore-booking>Continue Booking</button>
+						<button class="button button--secondary" type="button" data-clear-booking>Start Over</button>
+					</div>
+				</section>
+			</div>
+		</div>
+		<script src="script.js"></script>
+	</body>
+</html>
