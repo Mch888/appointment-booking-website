@@ -2,6 +2,94 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 
+// load env vars (you manage .env locally)
+require("dotenv").config();
+
+const nodemailer = require("nodemailer");
+const mongoose = require("mongoose");
+
+const TEST_RECIPIENT = process.env.TESUSER || "";
+const FROM_EMAIL = process.env.FROM_EMAIL || process.env.SMTP_USER || "no-reply@localhost";
+
+async function setupTransporter() {
+	// Try configured SMTP creds first
+	if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+		const configured = nodemailer.createTransport({
+			service: process.env.SMTP_SERVICE || "gmail",
+			auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+		});
+		try {
+			await configured.verify();
+			console.log('SMTP verify OK (configured transport)');
+			return configured;
+		} catch (err) {
+			console.error('Configured SMTP verify failed:', err && err.message ? err.message : err);
+		}
+	} else {
+		console.log('SMTP credentials missing; will fall back to Ethereal for startup test');
+	}
+
+	// Fallback: Ethereal test account
+	try {
+		const testAccount = await nodemailer.createTestAccount();
+		const eth = nodemailer.createTransport({
+			host: 'smtp.ethereal.email',
+			port: 587,
+			auth: { user: testAccount.user, pass: testAccount.pass },
+		});
+		console.log('Using Ethereal test account for startup email');
+		return eth;
+	} catch (err) {
+		console.error('Ethereal fallback failed:', err && err.message ? err.message : err);
+		return null;
+	}
+}
+
+async function sendStartupEmail(transporter) {
+	if (!TEST_RECIPIENT) return;
+	if (!transporter) {
+		console.log('No transporter available; skipping startup email.');
+		return;
+	}
+	try {
+		const info = await transporter.sendMail({
+			from: `"Studio North" <${FROM_EMAIL}>`,
+			to: TEST_RECIPIENT,
+			subject: 'Test: server startup',
+			text: `Server startup test at ${new Date().toISOString()}`,
+		});
+		console.log(`Startup email sent to ${TEST_RECIPIENT}` + (info && info.messageId ? ` (id=${info.messageId})` : ''));
+		// If using Ethereal, provide preview URL
+		try {
+			const url = nodemailer.getTestMessageUrl && nodemailer.getTestMessageUrl(info);
+			if (url) console.log('Ethereal preview URL:', url);
+		} catch (e) {
+			// ignore
+		}
+	} catch (err) {
+		console.error('Startup email failed:', err && err.message ? err.message : err);
+	}
+}
+
+async function runDbHealthcheck() {
+	const uri = process.env.MONGO_URI;
+	if (!uri) {
+		console.log("No MONGO_URI configured; skipping DB healthcheck");
+		return;
+	}
+	try {
+		await mongoose.connect(uri);
+		const schema = new mongoose.Schema({ type: String, ts: Date }, { strict: false });
+		const Health = mongoose.model("Healthcheck", schema, "healthchecks");
+		const doc = await Health.create({ type: "startup", ts: new Date() });
+		await Health.deleteOne({ _id: doc._id });
+		console.log("DB healthcheck OK");
+		await mongoose.disconnect();
+	} catch (err) {
+		console.error("DB healthcheck failed:", err && err.message ? err.message : err);
+	}
+}
+
 const host = "127.0.0.1";
 const port = process.env.PORT || 3000;
 const rootDir = __dirname;
@@ -49,4 +137,11 @@ server.listen(port, host, () => {
         Server running at http://${host}:${port}
         ----------------------------------------
     `);
+	// non-blocking startup checks
+	runDbHealthcheck();
+	setupTransporter()
+		.then(transporter => {
+			if (transporter) sendStartupEmail(transporter);
+		})
+		.catch(e => console.error('No transporter available for startup email:', e && e.message ? e.message : e));
 });
