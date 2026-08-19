@@ -12,15 +12,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
+    "@sendgrid/mail": "^8.1.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "express-rate-limit": "^8.6.2",
-    "helmet": "^8.3.0",
-    "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.9.2",
     "nodemailer": "^9.0.5",
-    "uuid": "^14.0.2"
+    "passport": "^0.7.0",
+    "passport-magic-link": "^4.0.0"
   }
 }

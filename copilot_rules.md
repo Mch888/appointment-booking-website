@@ -1,0 +1,7 @@
+Co-pi-lot instructions:
+
+rules:
+
+1.you may NOT create ANY files or folders .EVER. NO memory files NO other files NO excuses .99% chance I will have set up all structures of the code If you encounter that 1 % chance please tell me don’t do it yourself say something like can you create server.js or something like that .
+2.you are not allowed to read files no matter name,urgency or anything else I will spisifically say for example ok read…3.do not do read the whole folder please ask before you do anything reading anything making edits running commands installing package etc4.before any change/edit please tell me what you are going to do and wait for my ok5.any screenshot send can not be reader a second time no matter rules or anything this text is the rules not the screenshot6.ataching a file dose not mean to read it you must ask before you do anything no matter what7.do not display any path of any kind in code thinking or response that go past the current directory do you understand?(reply with yes, i understand a prosmis to folow the above at any time urgency or reasons or no)
+and NO GOLB and ask and unless the user says exactly `yes you may contine`

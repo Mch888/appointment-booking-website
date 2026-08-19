@@ -2,6 +2,7 @@
 let isDatabaseReady = false;
 
 const threeMinutesInMilliseconds = 3 * 60 * 1000;
+const threeDaysInMilliseconds = 3 * 24 * 60 * 60 * 1000;
 const bookingStorageKey = "studioNorthBookingProgress";
 const cookieTestName = "studioNorthCookieTest";
 
@@ -83,6 +84,12 @@ if (cookieNotice) {
 const bookingSteps = Array.from(document.querySelectorAll("[data-step]"));
 
 if (bookingSteps.length > 0) {
+	try {
+		window.localStorage.removeItem(bookingStorageKey);
+	} catch (error) {
+		// Local storage may be unavailable.
+	}
+
 	const bookingState = {
 		service: "",
 		staff: "",
@@ -96,11 +103,7 @@ if (bookingSteps.length > 0) {
 	const progressItems = Array.from(document.querySelectorAll("[data-progress-item]"));
 	const summaryFields = document.querySelectorAll("[data-summary]");
 	const confirmationCard = document.getElementById("booking-confirmation");
-	const leaveDialog = document.getElementById("leave-dialog");
-	const restoreDialog = document.getElementById("restore-dialog");
 	let currentStep = 1;
-	let hasUnsavedChanges = false;
-	let allowNavigation = false;
 
 	const updateSummary = () => {
 		summaryFields.forEach((field) => {
@@ -142,27 +145,24 @@ if (bookingSteps.length > 0) {
 		});
 	};
 
-	const hasMeaningfulProgress = () => {
-		return Object.values(bookingState).some((value) => value !== "");
-	};
-
-	const serializeProgress = () => JSON.stringify({
-		currentStep,
-		bookingState
-	});
-
 	const saveProgress = () => {
-		if (isDatabaseReady || !hasMeaningfulProgress()) {
+		if (isDatabaseReady) {
 			return;
 		}
 
-		const value = serializeProgress();
+		const draft = {
+			currentStep: Math.min(currentStep, 5),
+			bookingState: {
+				service: bookingState.service,
+				staff: bookingState.staff,
+				date: bookingState.date,
+				time: bookingState.time
+			}
+		};
+		const hasDraft = Object.values(draft.bookingState).some((value) => value !== "");
 
-		try {
-			window.localStorage.setItem(bookingStorageKey, value);
-			return;
-		} catch (error) {
-			setCookie(bookingStorageKey, value, new Date(Date.now() + threeMinutesInMilliseconds));
+		if (hasDraft) {
+			setCookie(bookingStorageKey, JSON.stringify(draft), new Date(Date.now() + threeDaysInMilliseconds));
 		}
 	};
 
@@ -171,18 +171,14 @@ if (bookingSteps.length > 0) {
 			return "";
 		}
 
-		try {
-			return window.localStorage.getItem(bookingStorageKey) || readCookie(bookingStorageKey);
-		} catch (error) {
-			return readCookie(bookingStorageKey);
-		}
+		return readCookie(bookingStorageKey);
 	};
 
 	const clearSavedProgress = () => {
 		try {
 			window.localStorage.removeItem(bookingStorageKey);
 		} catch (error) {
-			// Cookie cleanup below still runs when local storage is unavailable.
+			// Old local drafts may not exist or local storage may be unavailable.
 		}
 		deleteCookie(bookingStorageKey);
 	};
@@ -190,7 +186,11 @@ if (bookingSteps.length > 0) {
 	const restoreProgress = (savedValue) => {
 		try {
 			const saved = JSON.parse(savedValue);
-			Object.assign(bookingState, saved.bookingState || {});
+			const savedState = saved.bookingState || {};
+			bookingState.service = savedState.service || "";
+			bookingState.staff = savedState.staff || "";
+			bookingState.date = savedState.date || "";
+			bookingState.time = savedState.time || "";
 
 			document.querySelectorAll("[data-booking-field]").forEach((button) => {
 				button.classList.toggle("is-selected", bookingState[button.dataset.bookingField] === button.dataset.value);
@@ -201,23 +201,19 @@ if (bookingSteps.length > 0) {
 			});
 
 			updateSummary();
-			showStep(Math.min(Math.max(Number(saved.currentStep) || 1, 1), bookingSteps.length));
-			hasUnsavedChanges = false;
+			showStep(Math.min(Math.max(Number(saved.currentStep) || 1, 1), 5));
+			saveProgress();
 		} catch (error) {
 			clearSavedProgress();
 			showStep(1);
 		}
 	};
 
-	const goHome = () => {
-		allowNavigation = true;
-		window.location.href = "index.html";
-	};
-
 	const advanceStep = () => {
 		collectInputs();
 		updateSummary();
 		showStep(Math.min(currentStep + 1, bookingSteps.length));
+		saveProgress();
 		window.scrollTo({ top: document.getElementById("booking-flow")?.offsetTop || 0, behavior: "smooth" });
 	};
 
@@ -231,8 +227,8 @@ if (bookingSteps.length > 0) {
 			});
 
 			bookingState[key] = value;
-			hasUnsavedChanges = true;
 			updateSummary();
+			saveProgress();
 			window.setTimeout(advanceStep, 180);
 		});
 	});
@@ -240,14 +236,13 @@ if (bookingSteps.length > 0) {
 	document.querySelectorAll("[data-booking-input]").forEach((input) => {
 		input.addEventListener("input", () => {
 			collectInputs();
-			hasUnsavedChanges = hasMeaningfulProgress();
 			updateSummary();
 		});
 
 		input.addEventListener("change", () => {
 			collectInputs();
-			hasUnsavedChanges = hasMeaningfulProgress();
 			updateSummary();
+			saveProgress();
 
 			if (input.dataset.bookingInput === "date" && input.value) {
 				advanceStep();
@@ -285,42 +280,9 @@ if (bookingSteps.length > 0) {
 	document.querySelectorAll("[data-prev-step]").forEach((button) => {
 		button.addEventListener("click", () => {
 			showStep(Math.max(currentStep - 1, 1));
+			saveProgress();
 			window.scrollTo({ top: document.getElementById("booking-flow")?.offsetTop || 0, behavior: "smooth" });
 		});
-	});
-
-	document.querySelectorAll("[data-return-home]").forEach((link) => {
-		link.addEventListener("click", (event) => {
-			if (!hasUnsavedChanges || !hasMeaningfulProgress()) {
-				return;
-			}
-
-			event.preventDefault();
-			leaveDialog.hidden = false;
-		});
-	});
-
-	document.querySelector("[data-save-and-leave]")?.addEventListener("click", () => {
-		saveProgress();
-		hasUnsavedChanges = false;
-		goHome();
-	});
-
-	document.querySelector("[data-discard-and-leave]")?.addEventListener("click", () => {
-		clearSavedProgress();
-		hasUnsavedChanges = false;
-		goHome();
-	});
-
-	document.querySelector("[data-stay-on-page]")?.addEventListener("click", () => {
-		leaveDialog.hidden = true;
-	});
-
-	window.addEventListener("beforeunload", (event) => {
-		if (!allowNavigation && hasUnsavedChanges && hasMeaningfulProgress()) {
-			event.preventDefault();
-			event.returnValue = "";
-		}
 	});
 
 	const confirmButton = document.querySelector("[data-confirm-booking]");
@@ -336,7 +298,6 @@ if (bookingSteps.length > 0) {
 				item.classList.remove("is-active");
 			});
 			confirmationCard.hidden = false;
-			hasUnsavedChanges = false;
 			clearSavedProgress();
 			window.scrollTo({ top: 0, behavior: "smooth" });
 		});
@@ -347,18 +308,7 @@ if (bookingSteps.length > 0) {
 
 	const savedProgress = readSavedProgress();
 
-	if (savedProgress && restoreDialog) {
-		restoreDialog.hidden = false;
-
-		document.querySelector("[data-restore-booking]")?.addEventListener("click", () => {
-			restoreDialog.hidden = true;
-			restoreProgress(savedProgress);
-		});
-
-		document.querySelector("[data-clear-booking]")?.addEventListener("click", () => {
-			clearSavedProgress();
-			restoreDialog.hidden = true;
-			showStep(1);
-		});
+	if (savedProgress) {
+		restoreProgress(savedProgress);
 	}
 }
